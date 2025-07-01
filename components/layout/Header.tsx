@@ -6,6 +6,7 @@ import Image from 'next/image'
 import { usePathname } from 'next/navigation'
 import { Menu, X, ChevronDown, User, LogIn } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
+import { useScrollPosition } from '@/lib/hooks'
 
 const navigation = [
   { name: 'Home', href: '/' },
@@ -38,18 +39,12 @@ const navigation = [
 
 export const Header = () => {
   const [isOpen, setIsOpen] = useState(false)
-  const [isScrolled, setIsScrolled] = useState(false)
   const [activeSubmenu, setActiveSubmenu] = useState<string | null>(null)
   const [submenuTimeout, setSubmenuTimeout] = useState<NodeJS.Timeout | null>(null)
   const pathname = usePathname()
-
-  useEffect(() => {
-    const handleScroll = () => {
-      setIsScrolled(window.scrollY > 10)
-    }
-    window.addEventListener('scroll', handleScroll)
-    return () => window.removeEventListener('scroll', handleScroll)
-  }, [])
+  const { scrollY, isClient } = useScrollPosition()
+  
+  const isScrolled = isClient && scrollY > 10
 
   useEffect(() => {
     return () => {
@@ -93,7 +88,7 @@ export const Header = () => {
                 alt="EBASPA Logo"
                 width={350}
                 height={200}
-                style={{objectFit: 'contain'}}
+                style={{ objectFit: 'contain', width: 'auto', height: 'auto' }}
                 priority
               />
             </div>
@@ -169,7 +164,7 @@ export const Header = () => {
                   alt="ethiobds.org"
                   width={250}
                   height={125}
-                  style={{objectFit: 'contain'}}
+                  style={{ objectFit: 'contain', width: 'auto', height: 'auto' }}
                   className="rounded-lg"
                 />
               </div>

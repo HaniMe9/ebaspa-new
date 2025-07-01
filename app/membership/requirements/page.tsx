@@ -32,6 +32,7 @@ export default function MembershipRequirementsPage() {
                 alt="ethiobds.org"
                 width={180}
                 height={60}
+                style={{ width: 'auto', height: 'auto' }}
                 className="rounded-lg"
               />
             </a>

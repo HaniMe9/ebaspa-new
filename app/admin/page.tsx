@@ -4,11 +4,6 @@ import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import AdminDashboard from '@/components/admin/AdminDashboard'
 
-export const metadata = {
-  title: 'Admin Dashboard - EBASPA',
-  description: 'EBASPA admin dashboard for content management and member administration.',
-}
-
 export default function AdminPage() {
   const router = useRouter()
   const [user, setUser] = useState<any>(null)

@@ -210,7 +210,7 @@ export default function MemberDirectory() {
                   </span>
                 </div>
                 <div className="w-16 h-16 rounded-full overflow-hidden flex-shrink-0 ml-4 border-2 border-gray-100">
-                  <Image src={member.logo} alt={`${member.name} logo`} width={64} height={64} objectFit="cover" />
+                  <Image src={member.logo} alt={`${member.name} logo`} width={64} height={64} style={{ objectFit: 'cover' }} />
                 </div>
               </div>
               

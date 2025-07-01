@@ -57,8 +57,9 @@ export default function HeroSection() {
           <Image
             src={slides[currentSlide].image}
             alt={slides[currentSlide].title}
-            layout="fill"
-            objectFit="cover"
+            fill
+            style={{ objectFit: 'cover' }}
+            sizes="100vw"
             quality={100}
             priority={currentSlide === 0}
           />

@@ -191,6 +191,7 @@ const TeamMemberCard: React.FC<TeamMemberCardProps> = ({ member, delay }) => (
         src={member.image} 
         alt={member.name}
         fill
+        sizes="(max-width: 768px) 100vw, 33vw"
         className="grayscale hover:grayscale-0 transition-all duration-300 object-cover"
       />
     </div>
