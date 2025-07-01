@@ -1,0 +1,345 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id            String    @id @default(cuid())
+  email         String    @unique
+  name          String?
+  password      String
+  role          UserRole  @default(MEMBER)
+  emailVerified DateTime?
+  image         String?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  // Relations
+  member        Member?
+  admin         Admin?
+  sessions      Session[]
+  accounts      Account[]
+
+  @@map("users")
+}
+
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String? @db.Text
+  access_token      String? @db.Text
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String? @db.Text
+  session_state     String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+  @@map("accounts")
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("sessions")
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+  @@map("verification_tokens")
+}
+
+model Member {
+  id              String        @id @default(cuid())
+  userId          String        @unique
+  organizationName String
+  contactPerson   String
+  email           String        @unique
+  phone           String?
+  website         String?
+  address         String?
+  city            String?
+  region          String?
+  membershipType  MembershipType
+  status          MemberStatus  @default(PENDING)
+  registrationDate DateTime     @default(now())
+  expiryDate      DateTime?
+  logo            String?
+  description     String?
+  services        Json?         @default("[]")
+  certifications  Json?         @default("[]")
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+
+  // Relations
+  user            User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  events          EventMember[]
+  payments        Payment[]
+
+  @@map("members")
+}
+
+model Admin {
+  id        String   @id @default(cuid())
+  userId    String   @unique
+  role      AdminRole @default(ADMIN)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("admins")
+}
+
+model Event {
+  id          String      @id @default(cuid())
+  title       String
+  description String
+  type        EventType
+  startDate   DateTime
+  endDate     DateTime
+  location    String?
+  isOnline    Boolean     @default(false)
+  maxCapacity Int?
+  price       Float?
+  image       String?
+  status      EventStatus @default(DRAFT)
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+
+  // Relations
+  members     EventMember[]
+  registrations EventRegistration[]
+
+  @@map("events")
+}
+
+model EventMember {
+  id        String   @id @default(cuid())
+  eventId   String
+  memberId  String
+  role      String   @default("participant")
+  createdAt DateTime @default(now())
+
+  // Relations
+  event     Event    @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  member    Member   @relation(fields: [memberId], references: [id], onDelete: Cascade)
+
+  @@unique([eventId, memberId])
+  @@map("event_members")
+}
+
+model EventRegistration {
+  id        String   @id @default(cuid())
+  eventId   String
+  name      String
+  email     String
+  phone     String?
+  organization String?
+  status    RegistrationStatus @default(PENDING)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  event     Event    @relation(fields: [eventId], references: [id], onDelete: Cascade)
+
+  @@map("event_registrations")
+}
+
+model News {
+  id          String    @id @default(cuid())
+  title       String
+  content     String
+  excerpt     String?
+  image       String?
+  author      String?
+  category    String?
+  tags        Json?     @default("[]")
+  published   Boolean   @default(false)
+  publishedAt DateTime?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  @@map("news")
+}
+
+model Resource {
+  id          String   @id @default(cuid())
+  title       String
+  description String?
+  type        ResourceType
+  url         String?
+  filePath    String?
+  category    String?
+  tags        Json?    @default("[]")
+  downloads   Int       @default(0)
+  published   Boolean   @default(false)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  @@map("resources")
+}
+
+model Payment {
+  id            String        @id @default(cuid())
+  memberId      String
+  amount        Float
+  currency      String        @default("USD")
+  type          PaymentType
+  status        PaymentStatus @default(PENDING)
+  paymentMethod String?
+  transactionId String?
+  description   String?
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+
+  // Relations
+  member        Member        @relation(fields: [memberId], references: [id], onDelete: Cascade)
+
+  @@map("payments")
+}
+
+model Contact {
+  id          String   @id @default(cuid())
+  name        String
+  email       String
+  phone       String?
+  subject     String
+  message     String
+  inquiryType String?
+  status      ContactStatus @default(NEW)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@map("contacts")
+}
+
+model Donation {
+  id            String        @id @default(cuid())
+  name          String
+  email         String
+  amount        Float
+  currency      String        @default("USD")
+  message       String?
+  paymentMethod String?
+  status        PaymentStatus @default(PENDING)
+  transactionId String?
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+
+  @@map("donations")
+}
+
+model Benefit {
+  id          String        @id @default(cuid())
+  title       String
+  description String
+  membershipType MembershipType
+  icon        String
+  features    Json?         @default("[]")
+  category    String?
+  order       Int          @default(0)
+  active      Boolean      @default(true)
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+
+  @@map("benefits")
+}
+
+// Enums
+enum UserRole {
+  ADMIN
+  MEMBER
+  GUEST
+}
+
+enum AdminRole {
+  SUPER_ADMIN
+  ADMIN
+  MODERATOR
+}
+
+enum MembershipType {
+  FULL
+  ASSOCIATE
+  STUDENT
+}
+
+enum MemberStatus {
+  PENDING
+  ACTIVE
+  SUSPENDED
+  EXPIRED
+}
+
+enum EventType {
+  WORKSHOP
+  CONFERENCE
+  TRAINING
+  NETWORKING
+  WEBINAR
+}
+
+enum EventStatus {
+  DRAFT
+  PUBLISHED
+  CANCELLED
+  COMPLETED
+}
+
+enum RegistrationStatus {
+  PENDING
+  CONFIRMED
+  CANCELLED
+  ATTENDED
+}
+
+enum ResourceType {
+  DOCUMENT
+  VIDEO
+  AUDIO
+  LINK
+  TOOLKIT
+}
+
+enum PaymentType {
+  MEMBERSHIP
+  EVENT
+  DONATION
+  RENEWAL
+}
+
+enum PaymentStatus {
+  PENDING
+  COMPLETED
+  FAILED
+  REFUNDED
+}
+
+enum ContactStatus {
+  NEW
+  IN_PROGRESS
+  RESOLVED
+  CLOSED
+} 
