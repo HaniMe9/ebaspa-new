@@ -1,0 +1,21 @@
+User-agent: *
+Allow: /
+
+# Sitemap
+Sitemap: https://ebaspa.org/sitemap.xml
+
+# Disallow admin areas
+Disallow: /admin/
+Disallow: /api/
+
+# Allow important pages
+Allow: /about/
+Allow: /membership/
+Allow: /services/
+Allow: /resources/
+Allow: /news/
+Allow: /events/
+Allow: /contact/
+
+# Crawl delay (optional)
+Crawl-delay: 1 

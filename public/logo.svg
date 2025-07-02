@@ -1,0 +1,11 @@
+<svg viewBox="0 0 260 75" xmlns="http://www.w3.org/2000/svg">
+  <title>EBASPA Logo</title>
+  <g id="icon">
+    <path d="M54.3,0 L27.1,15.7 L0,31.4 L0,44.2 L27.1,60.1 L54.3,75.8 L54.3,44.2 L54.3,0 Z" fill="#00A9E0"/>
+    <path d="M54.3,0 L81.5,15.7 L54.3,31.4 L27.1,15.7 L54.3,0 Z" fill="#00BFF2"/>
+    <path d="M81.5,15.7 L54.3,31.4 L54.3,44.2 L81.5,28.4 L81.5,15.7 Z" fill="#0093C7"/>
+  </g>
+  <text x="90" y="56" font-family="'Times New Roman', Times, serif" font-size="48" fill="#0077B6">
+    baspa
+  </text>
+</svg> 
